@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorPrimaryDark"
+    tools:context=".SettingsActivity">
+
+
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/settingsImage"
+        android:layout_width="200dp"
+        android:layout_height="200dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:src="@drawable/defaultimg" />
+
+
+    <TextView
+        android:id="@+id/displayNameSettingId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/settingsImage"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="18dp"
+        android:text="@string/displan_name"
+        android:textColor="@android:color/background_light"
+        android:textSize="30sp"
+
+        android:textStyle="bold|italic" />
+
+    <TextView
+        android:id="@+id/statusSettingId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/displayNameSettingId"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="18dp"
+        android:text="@string/it_is_all_well_and_shall_be_well"
+
+        android:textColor="@android:color/background_light"
+
+        android:textSize="15sp" />
+
+
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/statusSettingId"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true">
+
+        <Button
+            android:id="@+id/changeImageId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="49dp"
+            android:background="@android:color/background_light"
+            android:padding="10dp"
+            android:text="@string/change_image"
+            tools:layout_editor_absoluteX="147dp"
+            tools:layout_editor_absoluteY="258dp" />
+
+        <Button
+            android:id="@+id/changeStatus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="10dp"
+            android:layout_below="@+id/changeImageId"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="18dp"
+            android:background="@color/colorAccent"
+            android:layout_centerHorizontal="true"
+            android:text="change status"
+            tools:layout_editor_absoluteX="147dp"
+            tools:layout_editor_absoluteY="258dp" />
+
+    </TableLayout>
+
+</RelativeLayout>

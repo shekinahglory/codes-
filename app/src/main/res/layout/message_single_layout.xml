@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/messageSingleLayout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+
+    android:padding="10dp">
+
+
+
+    <LinearLayout
+
+        android:id="@+id/messageTextLayoutLinearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/message_text_background"
+        android:layout_marginLeft="10dp"
+        android:padding="10dp"
+        >
+        <TextView
+            android:id="@+id/messageTextLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:padding="0dp"
+            android:textColor="#444444"
+            android:textSize="14sp"
+
+            android:text="TextView" />
+
+        <TextView
+            android:id="@+id/time_text_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+
+            android:padding="5dp"
+            android:layout_toEndOf="@+id/messageTextLayout"
+            android:text="00:00"
+            android:textSize="12sp" />
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/seconLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="180dp"
+        android:visibility="gone"
+        android:layout_below="@+id/messageTextLayoutLinearLayout">
+
+        <TextView
+            android:id="@+id/myMessageTextLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="0dp"
+            android:text="@string/second_textesview"
+            android:textColor="#444444"
+            android:textSize="14sp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="5dp"
+            android:layout_toEndOf="@+id/myMessageTextLayout"
+            android:text="00:00"
+            android:textSize="12sp"/>
+
+
+
+
+
+
+    </LinearLayout>
+
+
+   <!-- Removed the place images could be used -->
+
+    <!--<ImageView-->
+        <!--android:id="@+id/message_image_layout"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_alignStart="@+id/messageTextLayoutLinearLayout"-->
+        <!--android:layout_below="@+id/messageTextLayoutLinearLayout"-->
+        <!--android:layout_marginLeft="0dp"-->
+        <!--android:layout_toEndOf="@+id/messageTextLayoutLinearLayout"-->
+        <!--android:padding="0dp"-->
+        <!--android:scaleType="centerCrop" />-->
+
+
+</RelativeLayout>

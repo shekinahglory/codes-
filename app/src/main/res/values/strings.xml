@@ -1,0 +1,44 @@
+<resources>
+    <string name="app_name">friends</string>
+
+
+    <string name="create_a_new_account">create_a_new_account</string>
+
+    <string name="email">email</string>
+    <string name="password">password</string>
+    <string name="user_name">user name</string>
+    <string name="create_account">create account</string>
+    <string name="welcome_to_friend_chat_app">welcome to friend chat app</string>
+    <string name="already_have_an_account">already have an account</string>
+    <string name="need_a_new_accoutn">need a new accoutn</string>
+    <string name="log_out">Log Out</string>
+    <string name="all_users">All Users</string>
+    <string name="change_image">change image</string>
+    <string name="it_is_all_well_and_shall_be_well">It is all well and shall be well</string>
+    <string name="displan_name">displan name</string>
+    <string name="login_to_your_account">Login to your Account</string>
+    <string name="login">LOGIN</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="welcome_to_friends_page">Welcome to friends page</string>
+    <string name="welcome_to_request_page">welcome to request page</string>
+    <string name="welcome_to_chats_page">welcome to chats page</string>
+    <string name="status">status</string>
+    <string name="save_changes">save changes</string>
+    <string name="dilsplay_name">dilsplay name</string>
+    <string name="user_default_status">user default status</string>
+    <string name="welcome_to_friends_chat_app">welcome to friends chat app</string>
+    <string name="total_friends">total friends</string>
+    <string name="decline_friend_request">decline friend request</string>
+    <string name="name">name</string>
+    <string name="current_usere_status">Current Usere Status</string>
+    <string name="total_friend">Total friend</string>
+    <string name="online">Online</string>
+    <string name="cleanChat">cleanChat</string>
+    <string name="enter_message">Enter Message ...</string>
+    <string name="shek">Shek</string>
+    <string name="how_are_you_doing_this_is_a_long_message_that_should_probably_wrap">how_are_you_doing_this_is_a_long_message_that_should_probably_wrap</string>
+    <string name="second_textesview">Second TextesView</string>
+
+</resources>
