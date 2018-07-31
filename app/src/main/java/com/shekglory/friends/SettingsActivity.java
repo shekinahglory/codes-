@@ -6,11 +6,12 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -23,42 +24,30 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Callback;
 import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
-
 import java.io.File;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class SettingsActivity extends AppCompatActivity {
 
 
-
-    private DatabaseReference mUserDatabase;
-
-    private FirebaseUser mCurrentUser;
-
-
     //Android Layout
-
-    private CircleImageView mDisplayImage;
-
+    private CircularImageView mDisplayImage;
     private TextView mName;
-
     private TextView mStatus;
-
+    private TextView friendNumber;
     private Button mStatusBtn;
-
     private Button mImageBtn;
-
+    private Toolbar toolbar;
     private static final int GALERY_PICK = 1;
-
     //Storage FIrebase
-
+    private DatabaseReference mUserDatabase;
+    private FirebaseUser mCurrentUser;
     private StorageReference storageReference;
-
     private ProgressDialog mProgressDialog;
 
     @Override
@@ -66,17 +55,24 @@ public class SettingsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
+        toolbar = (Toolbar) findViewById(R.id.accountSettings_id);
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle("Settings");
 
 
-        mDisplayImage = (CircleImageView) findViewById(R.id.settingsImage) ;
+        mDisplayImage = (CircularImageView) findViewById(R.id.settingsImage) ;
         mName = (TextView) findViewById(R.id.displayNameSettingId);
         mStatus = (TextView)  findViewById(R.id.statusSettingId);
+        friendNumber = (TextView) findViewById(R.id.friend_number_id);
         mStatusBtn = (Button) findViewById(R.id.changeStatus);
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
         storageReference = FirebaseStorage.getInstance().getReference();
 
         mImageBtn = (Button) findViewById(R.id.changeImageId);
 
+
+        
         String currentUid = mCurrentUser.getUid();
 
         mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUid);
@@ -90,17 +86,14 @@ public class SettingsActivity extends AppCompatActivity {
                 String name = dataSnapshot.child("name").getValue().toString();
 
                 final  String image = dataSnapshot.child("image").getValue().toString();
-
                 String status = dataSnapshot.child("status").getValue().toString();
-
                 String thumbImage = dataSnapshot.child("thumb_image").getValue().toString();
-
+                String numberOfFriends = dataSnapshot.child("friend_number").getValue().toString();
                 mName.setText(name);
                 mStatus.setText(status);
+                friendNumber.setText(numberOfFriends);
 
                 if (!image.equals("default")){
-
-//                    Picasso.with(SettingsActivity.this).load(image).placeholder(R.drawable.defaultimg).into(mDisplayImage);
 
                     Picasso.with(SettingsActivity.this).load(image).networkPolicy(NetworkPolicy.OFFLINE)
                             .placeholder(R.drawable.defaultimg).into(mDisplayImage, new Callback() {
@@ -115,9 +108,6 @@ public class SettingsActivity extends AppCompatActivity {
                         }
                     });
                 }
-
-
-
 
             }
 
@@ -148,10 +138,6 @@ public class SettingsActivity extends AppCompatActivity {
                 galeryIntent.setType("image/*");
                 galeryIntent.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(galeryIntent, "SELECT IMAGE"), GALERY_PICK);
-
-//                CropImage.activity()
-//                        .setGuidelines(CropImageView.Guidelines.ON)
-//                        .start(SettingsActivity.this);
             }
         });
 
@@ -163,14 +149,11 @@ public class SettingsActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == GALERY_PICK  && resultCode == RESULT_OK) {
-
             Uri imageUri = data.getData();
             CropImage.activity(imageUri)
                     .setAspectRatio(1,1)
                     .setMinCropWindowSize(500, 500)
                     .start(this);
-
-//                Toast.makeText(SettingsActivity.this, imageUri, Toast.LENGTH_LONG).show();
 
         }
 
@@ -184,15 +167,9 @@ public class SettingsActivity extends AppCompatActivity {
                 mProgressDialog.setMessage("Please wait while we upload and process the image");
                 mProgressDialog.setCanceledOnTouchOutside(false);
                 mProgressDialog.show();
-
                 Uri resultUri = result.getUri();
-
                 File thum_filePath = new File(resultUri.getPath());
-
                 String current_user_id = mCurrentUser.getUid();
-
-//                Bitmap thumb_bitmap = new Compressor(this).compressToBitmap(thum_filePath);
-
                 StorageReference filePath = storageReference.child("profile_images").child( current_user_id + ".jpg");
                 StorageReference thumb_filepath = storageReference.child("profile_images").child("thumbs").child(current_user_id + ".jpg");
 
@@ -203,18 +180,13 @@ public class SettingsActivity extends AppCompatActivity {
                         if(task.isSuccessful()){
 
                             String download_url = task.getResult().getDownloadUrl().toString();
-
-//                            UploadTask uploadTask = thumb_filepath.putBytes();
-
                             mUserDatabase.child("image").setValue(download_url).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
-
                                     if(task.isSuccessful()){
                                         mProgressDialog.dismiss();
                                         Toast.makeText(SettingsActivity.this, "Success Uploading", Toast.LENGTH_LONG).show();
                                     }
-
                                 }
                             });
 
@@ -225,10 +197,22 @@ public class SettingsActivity extends AppCompatActivity {
                     }
                 });
 
-
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 Exception error = result.getError();
             }
         }
     }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == android.R.id.home){
+            Intent returnToMainactivity = new Intent(SettingsActivity.this, MainActivity.class);
+            startActivity(returnToMainactivity);
+            finish();
+        }
+        return true;
+    }
+
+
+
 }

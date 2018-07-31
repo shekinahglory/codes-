@@ -30,6 +30,7 @@ public class StatusActivity extends AppCompatActivity {
     //Firebase
 
     private DatabaseReference mStatusDatabase;
+//    private DatabaseReference mUserFindFriendStatusDatabase;
     private FirebaseUser mCurrentUser;
 
     //Progress
@@ -49,7 +50,7 @@ public class StatusActivity extends AppCompatActivity {
         String currentUid = mCurrentUser.getUid();
 
         mStatusDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(currentUid);
-
+//        mUserFindFriendStatusDatabase = FirebaseDatabase.getInstance().getReference().child("UsersFindFriend").child("status");
 
         mToolbar = (Toolbar) findViewById(R.id.statusAppBarId);
 
@@ -73,7 +74,12 @@ public class StatusActivity extends AppCompatActivity {
                 mProgress.show();
 
                 String status = mStatus.getEditText().getText().toString();
-
+//                mUserFindFriendStatusDatabase.setValue(status).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<Void> task) {
+//
+//                    }
+//                });
                 mStatusDatabase.child("status").setValue(status).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {

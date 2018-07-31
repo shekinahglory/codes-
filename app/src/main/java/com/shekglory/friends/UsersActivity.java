@@ -1,9 +1,7 @@
 package com.shekglory.friends;
 
 import android.content.Context;
-
 import android.content.Intent;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -13,17 +11,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
-
-
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class UsersActivity extends AppCompatActivity {
 
@@ -53,13 +48,9 @@ public class UsersActivity extends AppCompatActivity {
         query = FirebaseDatabase.getInstance()
                 .getReference()
                 .child("Users");
-
-
         mUserList = (RecyclerView) findViewById(R.id.usersListId);
         mUserList.setHasFixedSize(true);
-
         mUserList.setLayoutManager(new LinearLayoutManager(this));
-
 
     }
 
@@ -103,36 +94,19 @@ public class UsersActivity extends AppCompatActivity {
                 holder.mView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
                         Intent profileIntent = new Intent(UsersActivity.this, ProfileActivity.class);
-
-
                         profileIntent.putExtra("user_id",userId);
-
                         startActivity(profileIntent);
 
                     }
                 });
-
             }
-
-
         };
 
 
-
         mUserList.setAdapter(firebaseRecyclerAdapter);
-
         firebaseRecyclerAdapter.startListening();
     }
-
-
-
-
-
-
-
-
 
 
 
@@ -161,9 +135,7 @@ public class UsersActivity extends AppCompatActivity {
         }
 
         public void setUserImage(String image, Context context) {
-
-            CircleImageView userImageView = (CircleImageView) mView.findViewById(R.id.userSingleImage);
-
+            CircularImageView userImageView = (CircularImageView) mView.findViewById(R.id.userSingleImage);
             Picasso.with(context).load(image).placeholder(R.drawable.defaultimg).into(userImageView);
 
         }

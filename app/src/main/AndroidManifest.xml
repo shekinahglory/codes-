@@ -3,9 +3,10 @@
     package="com.shekglory.friends">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE"/>
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA"/>
 
     <application
         android:allowBackup="true"
@@ -15,7 +16,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <service android:name=".FirebaseMessagingService">
-            <intent-filter>/home/shekinah-b
+            <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
@@ -23,7 +24,6 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -42,9 +42,20 @@
         <activity
             android:name=".StatusActivity"
             android:parentActivityName=".SettingsActivity" />
-        <activity android:name=".ProfileActivity" />
-        <activity android:name=".ChatActivity" android:parentActivityName=".MainActivity">
+        <activity
+            android:name=".ChatActivity"
+            android:parentActivityName=".MainActivity">
 
+        </activity>
+        <activity android:name=".ProfileActivity" >
+            <intent-filter>
+                <action android:name="com.shekglory.friends_TARGET_NOTIFICATION">
+                </action>
+                <category android:name="android.intent.category.DEFAULT"></category>
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".RegisterProfImageActivity">
 
         </activity>
     </application>

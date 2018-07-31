@@ -8,18 +8,16 @@
     tools:context="com.shekglory.friends.RegisterActivity">
 
 
-    <include layout="@layout/app_bar_layout" android:id="@+id/register_toolbar"/>
+    <!--<include layout="@layout/app_bar_layout" android:id="@+id/register_toolbar"/>-->
 
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/register_toolbar"
         android:layout_marginStart="127dp"
-        android:layout_marginTop="52dp"
-        android:text="create a new account "
-
+        android:layout_marginTop="62dp"
+        android:text="@string/create_a_new_account2"
         android:textColor="@android:color/black"
         android:textSize="18dp" />
 
@@ -73,21 +71,51 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="@string/password"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"/>
     </android.support.design.widget.TextInputLayout>
 
 
 
-    <Button
+       <Button
         android:id="@+id/createButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="20dp"
+        android:drawableRight="@drawable/chevronright"
         android:layout_below="@+id/textInputLayoutPassword"
-        android:backgroundTint="@color/colorAccent"
-        android:text="@string/create_account"
+        android:text="@string/create"
+         />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/goToLoginButton"
+        android:layout_marginEnd="-127dp"
+        android:layout_toStartOf="@+id/textView3"
+        android:textColor="@color/common_google_signin_btn_text_light"
+        android:text="@string/i_have_an_account" />
+
+    <Button
+        android:id="@+id/goToLoginButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="83dp"
+        android:backgroundTint="#ff4081"
+        android:text="@string/sign_in"
         android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:textColorLink="@color/common_google_signin_btn_text_dark_default" />
+    <ProgressBar
+        android:id="@+id/registerProgressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:indeterminate="true"
+        android:visibility="invisible" />
+
 
 </RelativeLayout>

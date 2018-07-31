@@ -40,5 +40,32 @@
     <string name="shek">Shek</string>
     <string name="how_are_you_doing_this_is_a_long_message_that_should_probably_wrap">how_are_you_doing_this_is_a_long_message_that_should_probably_wrap</string>
     <string name="second_textesview">Second TextesView</string>
+    <string name="friends">Friends</string>
+    <string name="raised_button">CONTINUE</string>
+    <string name="or">or</string>
+    <string name="need_a_account">Need a account?</string>
+    <string name="sign_up">SIgn up</string>
+    <string name="feel">Feel</string>
+    <string name="cleanchat">cleanChat</string>
+    <string name="i_have_an_account">I have an account</string>
+    <string name="sign_in">Sign in</string>
+    <string name="create_account2">Create account</string>
+    <string name="welcome">Welcome</string>
+    <string name="request_sent">Request Sent</string>
+    <string name="_0">0</string>
+    <string name="received">Received</string>
+    <string name="change_status">change status</string>
+    <string name="add_profile_picture">Add profile picture ?</string>
+    <string name="skip">Skip</string>
+    <string name="create_a_new_account2">create a new account</string>
+    <string name="create">Create</string>
+    <string name="send_friend_request">SEND FRIEND REQUEST</string>
+    <string name="_00_00">00:00</string>
+    <string name="the_bset_we_to_do_this_jow_is_a">the bset we to do this jow is a</string>
+    <string name="textview_asdfjskf_asdf_aksdfasdf_asdf_ajksdfafads">TextView asdfjskf asdf aksdfasdf asdf ajksdfafads</string>
+    <string name="from_image">From</string>
+    <string name="search">Search ...</string>
+    <string name="accounts_settings">Accounts Settings</string>
+    <string name="friend_requests">Friend requests</string>
 
 </resources>

@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.view.View;
@@ -24,10 +25,11 @@ import com.google.firebase.iid.FirebaseInstanceId;
 public class LoginActivity extends AppCompatActivity {
 
 
-    private Toolbar mToolBar;
+
     private TextInputLayout mLoginEmail;
     private TextInputLayout mLoginPassword;
     private Button mLogin_button;
+    private AppCompatButton goToRegisterBtn;
     private ProgressDialog mLoginProgress;
     private FirebaseAuth mAuth;
     private DatabaseReference mUserDatabase;
@@ -37,24 +39,14 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-
-
-        mToolBar = (Toolbar) findViewById(R.id.login_toolbar);
-        setSupportActionBar(mToolBar);
-        if(getSupportActionBar() != null){
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
-
-        getSupportActionBar().setTitle("Login");
-
         mLoginEmail = (TextInputLayout) findViewById(R.id.logtextInputLayoutEmail);
-
         mLoginPassword = (TextInputLayout) findViewById(R.id.logtextInputLayoutPassword);
         mLoginPassword.setCounterEnabled(true);
         mLoginPassword.setCounterMaxLength(20);
         mLoginProgress = new ProgressDialog(this);
         mAuth = FirebaseAuth.getInstance();
         mLogin_button = (Button) findViewById(R.id.logcreateButton);
+        goToRegisterBtn = (AppCompatButton) findViewById(R.id.goToRegisterFromLoing_id);
         mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
 
         mLogin_button.setOnClickListener(new View.OnClickListener() {
@@ -74,6 +66,16 @@ public class LoginActivity extends AppCompatActivity {
 
                     loginUser( email, password);
                 }
+            }
+        });
+
+        goToRegisterBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+                startActivity(intent);
+                finish();
             }
         });
     }
@@ -101,6 +103,7 @@ public class LoginActivity extends AppCompatActivity {
 
                             Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
                             mainIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            mainIntent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
                             startActivity(mainIntent);
                             finish();
 

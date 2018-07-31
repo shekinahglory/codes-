@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RegisterProfImageActivity">
+
+
+    <TextView
+        android:id="@+id/welcomeText_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="82dp"
+        android:textStyle="bold"
+        android:text="@string/welcome" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/addProfileText"
+        android:layout_marginTop="8dp"
+        android:layout_below="@+id/welcomeText_id"
+        android:layout_centerHorizontal="true"
+        android:text="@string/add_profile_picture" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/layoutForImage_id"
+        android:layout_below="@+id/addProfileText"
+        android:layout_centerHorizontal="true"
+        >
+        <com.mikhaellopez.circularimageview.CircularImageView
+            android:layout_width="180dp"
+            android:layout_height="180dp"
+            android:layout_marginTop="30dp"
+            app:civ_border_color="#EEEEEE"
+            app:civ_border_width="4dp"
+            app:civ_shadow="true"
+            app:civ_shadow_radius="10"
+            app:civ_shadow_color="#8BC34A"
+            android:id="@+id/imageto_save_id"
+            android:src="@drawable/defaultimg"
+
+            />
+
+        <android.support.design.widget.FloatingActionButton
+            android:layout_height="wrap_content"
+            android:layout_width="50dp"
+            android:id="@+id/registerProfilePhoto_id"
+            android:layout_marginTop="170dp"
+            android:layout_marginLeft="105dp"
+            android:src="@drawable/plus"
+            android:background="#FFFFFF"
+
+            />
+    </RelativeLayout>
+
+
+
+    <Button
+        android:id="@+id/skipButtonId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@+id/layoutForImage_id"
+        android:drawableRight="@drawable/chevronright"
+        android:text="@string/skip" />
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/continue_to_main_id"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/skipButtonId"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
+        android:background="#FFFF"
+        android:text="@string/raised_button" />
+
+</RelativeLayout>

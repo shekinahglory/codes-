@@ -2,15 +2,12 @@ package com.shekglory.friends;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -20,22 +17,25 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
+import java.sql.Date;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.TimeZone;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
 
 
     private List<Messages> mMessageList;
-
-
     private DatabaseReference mUserDatabase;
-
     private FirebaseUser mCurrentUser;
+    private String name;
+    private String username;
 
 
-    public MessageAdapter(List<Messages> mMessageList){
+    public MessageAdapter(List<Messages> mMessageList, String name){
+        this.name = name;
         this.mMessageList = mMessageList;
     }
 
@@ -52,80 +52,62 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     public void onBindViewHolder(@NonNull final MessageViewHolder holder, int position) {
 
         Messages c = mMessageList.get(position);
-
         mCurrentUser = FirebaseAuth.getInstance().getCurrentUser();
         String currentUid = mCurrentUser.getUid();
-
         String from_user = c.getFrom();
-
-//        if (from_user.equals(currentUid)){
-//
-//            Log.d("DEFAULT" , "working");
-//
-//        } else {
-//
-//            Log.d("DEFAULT" ,  from_user);
-//
-//        }
-
-
         String message_type = c.getType();
-
         String message_from = c.getFrom();
 
 
 
+
+
+        mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(message_from);
+
+        String time = c.getTime() + "";
+
+        Date date = new Date(c.getTime());
+
+        SimpleDateFormat sdf = new SimpleDateFormat("h:mm a");
+        String formattedTime = sdf.format(date);
+
         if(message_type.equals("text")){
 
 
-
-
             if (from_user.equals(currentUid)){
-
-                holder.messageTextLayoutLinearLayout.setVisibility(View.GONE);
-                holder.myMessageTextLayout.setVisibility(View.VISIBLE);
-                holder.myMessageText.setText(c.getMessages());
-
-
-            } else {
-
-                holder.messageTextLayoutLinearLayout.setVisibility(View.VISIBLE);
-                holder.myMessageTextLayout.setVisibility(View.GONE);
+                holder.chat_left_layout.setVisibility(View.VISIBLE);
+                holder.chat_right_layout.setVisibility(View.GONE);
+                holder.messageImage.setVisibility(View.GONE);
                 holder.messageText.setText(c.getMessages());
+                holder.myTIme.setText(formattedTime);
+            } else {
+                holder.chat_left_layout.setVisibility(View.GONE);
+                holder.messageImage.setVisibility(View.GONE);
+                holder.chat_right_layout.setVisibility(View.VISIBLE);
+                holder.myMessageText.setText(c.getMessages());
+                holder.theirTime.setText(formattedTime);
             }
 
 
-//            holder.messageText.setPadding(50,0,0,0);
-
-
-
-
-            Log.d("DEFAULT" ,  message_from);
-//            holder.messageImage.setVisibility(View.INVISIBLE);
-
         } else {
 
+            if(!from_user.equals(currentUid)){
 
-            holder.messageTextLayoutLinearLayout.setVisibility(View.GONE);
+                username = name;
+                holder.imageFromCaption.setText(username);
+                holder.imageFromCaption.setVisibility(View.VISIBLE);
 
+            }
 
-//            Picasso.with(holder.messageImage.getContext()).load(c.getMessages())
-//                    .placeholder(R.drawable.defaultimg).into(holder.messageImage);
+            holder.chat_left_layout.setVisibility(View.GONE);
+            holder.chat_right_layout.setVisibility(View.GONE);
 
-
-            // The images are loaded from here.
-//
-//            Picasso.with(holder.messageImage.getContext()).load(c.getMessages()).fit().centerCrop()
-//                    .placeholder(R.drawable.defaultimg)
-//                    .into(holder.messageImage);
-
-
+//             The images are loaded from here.
+            Picasso.with(holder.messageImage.getContext()).load(c.getMessages())
+                    .resize(260, 260)
+                    .centerCrop()
+                    .into(holder.messageImage);
         }
-
-
-
-
-
     }
 
 
@@ -139,34 +121,25 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     public class MessageViewHolder extends RecyclerView.ViewHolder {
 
         public TextView messageText;
-
-        public CircleImageView profileImage;
-
+        public TextView imageFromCaption;
+        public TextView theirTime;
+        public TextView myTIme;
         public ImageView messageImage;
-
-        public LinearLayout messageTextLayoutLinearLayout;
-
+        public LinearLayout messageImageLayout;
+        public LinearLayout chat_left_layout;
+        private LinearLayout chat_right_layout;
         private  TextView myMessageText ;
-
-        private LinearLayout myMessageTextLayout;
-
 
         public MessageViewHolder(View view){
             super(view);
-
             messageText = (TextView) view.findViewById(R.id.messageTextLayout);
-
+            imageFromCaption = (TextView) view.findViewById(R.id.imageFromId);
             myMessageText = (TextView) view.findViewById(R.id.myMessageTextLayout);
-
-            myMessageTextLayout = (LinearLayout) view.findViewById(R.id.seconLayout);
-
-//         messageImage = (ImageView) view.findViewById(R.id.message_image_layout);
-
-            messageTextLayoutLinearLayout = (LinearLayout) view.findViewById(R.id.messageTextLayoutLinearLayout);
-
+            chat_right_layout = (LinearLayout) view.findViewById(R.id.chat_right_msg_layout);
+            messageImage = (ImageView) view.findViewById(R.id.message_image_layout);
+            chat_left_layout = (LinearLayout) view.findViewById(R.id.chat_left_msg_layout);
+            theirTime = (TextView) view.findViewById(R.id.their_message_time);
+            myTIme = (TextView) view.findViewById(R.id.time_text_layout);
         }
-
-
     }
-
 }

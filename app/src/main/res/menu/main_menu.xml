@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
     <item
         android:id="@+id/mainLogOutB"
         android:title="@string/log_out" />
-    <item android:title="Accounts Settings"  android:id="@+id/settingsId"/>
-    <item android:title="@string/all_users" android:id="@+id/allusersId" />
+    <item android:title="@string/accounts_settings"  android:id="@+id/settingsId"/>
+    <item android:title="@string/friend_requests" android:id="@+id/allusersId" />
+
+
+
 
 </menu>

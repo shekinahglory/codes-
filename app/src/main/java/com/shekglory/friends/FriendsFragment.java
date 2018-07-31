@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
-import android.support.v7.widget.AlertDialogLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -16,7 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,9 +24,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
 
-import de.hdodenhof.circleimageview.CircleImageView;
 
 
 /**
@@ -38,17 +36,11 @@ public class FriendsFragment extends Fragment {
 
 
     private RecyclerView mFriendList;
-
     private DatabaseReference mFriendDatabase;
-
     private DatabaseReference mUsersDatabase;
-
     private FirebaseAuth mAuth;
-
     private String mCurrentUserId;
-
     private View mMainView;
-
     private Query query;
 
 
@@ -215,7 +207,7 @@ public class FriendsFragment extends Fragment {
 
         public void setUserImage(String image, Context context) {
 
-            CircleImageView userImageView = (CircleImageView) mView.findViewById(R.id.userSingleImage);
+            CircularImageView userImageView = (CircularImageView) mView.findViewById(R.id.userSingleImage);
 
             Picasso.with(context).load(image).placeholder(R.drawable.defaultimg).into(userImageView);
 

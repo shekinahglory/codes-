@@ -65,4 +65,6 @@ public class FriendsChat extends Application {
 
 
     }
+
+
 }

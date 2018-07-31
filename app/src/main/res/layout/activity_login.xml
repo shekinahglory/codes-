@@ -8,14 +8,12 @@
     tools:context=".LoginActivity">
 
 
-    <include layout="@layout/app_bar_layout" android:id="@+id/login_toolbar"/>
+
 
     <TextView
         android:id="@+id/textView3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-
-
         android:layout_marginStart="127dp"
         android:layout_marginTop="120dp"
         android:text="@string/login_to_your_account"
@@ -69,10 +67,37 @@
         android:layout_below="@+id/logtextInputLayoutPassword"
         android:layout_marginLeft="20dp"
         android:layout_marginTop="20dp"
-        android:backgroundTint="@color/colorAccent"
+        android:backgroundTint="#ff4081"
         android:text="@string/login"
         android:textColor="@color/common_google_signin_btn_text_dark_default"
         android:textColorLink="@color/common_google_signin_btn_text_dark_default" />
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="14dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/need_a_account" />
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/goToRegisterFromLoing_id"
+            android:layout_width="wrap_content"
+            android:layout_height="31dp"
+            android:background="#FFFF"
+            android:layout_marginLeft="20dp"
+            android:text="@string/sign_up" />
+
+    </LinearLayout>
+
 
 
 </RelativeLayout>

@@ -4,8 +4,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary"
+
     tools:context="com.shekglory.friends.StartActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:text="@string/feel" />
+
+    <View
+        android:id="@+id/separator"
+        android:layout_width="match_parent"
+        android:layout_height="0.7dip"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="46dp"
+        android:background="#000000" />
 
     <TextView
         android:id="@+id/textView2"
@@ -13,30 +30,35 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="180dp"
-        android:text="@string/welcome_to_friends_chat_app"
-        android:textColor="@android:color/background_light"
+        android:text="@string/cleanchat"
         android:textSize="30sp"
-
+        android:layout_marginBottom="30dp"
         android:textStyle="bold|italic" />
 
-
-    <TableLayout
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/textView2"
-        android:layout_centerHorizontal="true">
+        android:layout_alignBaseline="@+id/newAcBut"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="23dp"
+        android:text="@string/i_have_an_account"
+        android:textColor="@color/common_google_signin_btn_text_light" />
+
+
         <Button
             android:id="@+id/newAcBut"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="10dp"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="49dp"
-            android:background="@color/colorAccent"
             android:layout_centerHorizontal="true"
-            android:text="@string/already_have_an_account"
-            tools:layout_editor_absoluteX="147dp"
-            tools:layout_editor_absoluteY="258dp" />
+            android:layout_below="@+id/textView2"
+            android:layout_marginTop="10dp"
+            android:backgroundTint="#ff4081"
+            android:text="@string/sign_in"
+            android:textColor="@color/common_google_signin_btn_text_dark_default"
+            android:textColorLink="@color/common_google_signin_btn_text_dark_default" />
+
+
+
 
         <Button
             android:id="@+id/regButton"
@@ -44,14 +66,30 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/newAcBut"
             android:layout_centerHorizontal="true"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="49dp"
-            android:background="@android:color/background_light"
+            android:layout_marginTop="90dp"
             android:padding="10dp"
-            android:text="@string/need_a_new_accoutn"
+            android:background="@android:color/background_light"
+            android:text="@string/create_account2"
             android:textColor="@color/common_google_signin_btn_text_dark_focused"
-            tools:layout_editor_absoluteX="147dp"
-            tools:layout_editor_absoluteY="258dp" />
+           />
 
-    </TableLayout>
+
+    <View
+        android:id="@+id/separator2"
+        android:layout_width="match_parent"
+        android:layout_height="0.7dip"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:layout_marginBottom="45dp"
+        android:background="#000000" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="12dp"
+        android:text="@string/welcome" />
+
+
 </RelativeLayout>

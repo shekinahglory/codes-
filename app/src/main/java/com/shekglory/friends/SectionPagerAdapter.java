@@ -17,12 +17,12 @@ class SectionPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch(position){
             case 0:
-                RequestFragment requestFragment = new RequestFragment();
-                return requestFragment;
-
-            case 1:
                 ChatsFragment chatsFragment = new ChatsFragment();
                 return  chatsFragment;
+
+            case 1:
+                RequestFragment requestFragment = new RequestFragment();
+                return requestFragment;
 
             case 2:
                 FriendsFragment friendsFragment = new FriendsFragment();
@@ -44,9 +44,9 @@ class SectionPagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position){
         switch (position){
             case 0:
-                return "REQUEST";
-            case 1:
                 return "CHATS";
+            case 1:
+                return "FIND";
 
             case 2:
                 return "FRIENDS";

@@ -33,7 +33,7 @@
         android:layout_below="@+id/statusInputId"
         android:layout_marginEnd="51dp"
         android:layout_marginTop="32dp"
-        android:background="@color/colorAccent"
+        android:background="#ff4081"
         android:padding="10dp"
         android:text="@string/save_changes"
         android:textAlignment="center"

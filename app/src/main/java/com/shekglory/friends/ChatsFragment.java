@@ -14,9 +14,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -25,27 +27,24 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.mikhaellopez.circularimageview.CircularImageView;
 import com.squareup.picasso.Picasso;
-
-import de.hdodenhof.circleimageview.CircleImageView;
-
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ChatsFragment extends Fragment {
+public class
+ChatsFragment extends Fragment {
 
 
     private RecyclerView mConvList;
-
     private DatabaseReference mConvDatabase;
+    private DatabaseReference mconverDatabase;
     private DatabaseReference mMessageDatabase;
     private DatabaseReference mUsersDatabase;
-
     private FirebaseAuth mAuth;
-
     private String mCurrent_user_id;
-
+    private TextView welcomeChatText;
     private View mMainView;
 
 
@@ -58,14 +57,12 @@ public class ChatsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mMainView = inflater.inflate(R.layout.fragment_chats, container, false);
-
         mConvList = (RecyclerView) mMainView.findViewById(R.id.conv_list);
+        welcomeChatText = (TextView) mMainView.findViewById(R.id.welcomed_text_chatFragment_id);
         mAuth = FirebaseAuth.getInstance();
-
         mCurrent_user_id = mAuth.getCurrentUser().getUid();
-
         mConvDatabase = FirebaseDatabase.getInstance().getReference().child("Chat").child(mCurrent_user_id);
-
+        mconverDatabase = FirebaseDatabase.getInstance().getReference().child("Chat").child(mCurrent_user_id);
         mConvDatabase.keepSynced(true);
         mUsersDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
         mMessageDatabase = FirebaseDatabase.getInstance().getReference().child("messages").child(mCurrent_user_id);
@@ -74,9 +71,22 @@ public class ChatsFragment extends Fragment {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
-
         mConvList.setHasFixedSize(true);
         mConvList.setLayoutManager(linearLayoutManager);
+
+        mConvDatabase.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.getValue() != null){
+                    welcomeChatText.setVisibility(View.GONE);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
 
         // Inflate the layout for this fragment
@@ -89,9 +99,11 @@ public class ChatsFragment extends Fragment {
     public void onStart() {
         super.onStart();
 
-//        Query conversationQuery = mConvDatabase.orderByChild("timestamp");
-        Query conversationQuery = mConvDatabase;
 
+
+
+        Query conversationQuery = mConvDatabase.orderByChild("timestamp").limitToLast(20);
+        conversationQuery.keepSynced(true);
 
         FirebaseRecyclerOptions<Conv> options =
                 new FirebaseRecyclerOptions.Builder<Conv>()
@@ -116,51 +128,39 @@ public class ChatsFragment extends Fragment {
 
                 final String list_user_id = getRef(position).getKey();
 
-                Query lastMessageQuery = mMessageDatabase.child(list_user_id).limitToLast(1);
+                final Query lastMessageQuery = mMessageDatabase.child(list_user_id).limitToLast(1);
 
                 lastMessageQuery.addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
-                        String data = dataSnapshot.child("messages").getValue().toString();
-                        holder.setMessage(data, model.isSeen());
-
+                        if (dataSnapshot.child("type").getValue().toString().equals("text")){
+                            String data = dataSnapshot.child("messages").getValue().toString();
+                            holder.setMessage(data, model.isSeen());
+                        } else {
+                            holder.setMessage("Image", model.isSeen());
+                            holder.setImageReceived();
+                        }
                     }
 
                     @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) { }
                     @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                    }
-
+                    public void onChildRemoved(DataSnapshot dataSnapshot) { }
                     @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) { }
                     @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
+                    public void onCancelled(DatabaseError databaseError) { }
                 });
-
 
                 mUsersDatabase.child(list_user_id).addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
-
                         final String userName = dataSnapshot.child("name").getValue().toString();
-                        String userThumb = dataSnapshot.child("thumb_image").getValue().toString();
-
+                        final String userThumb = dataSnapshot.child("image").getValue().toString();
                         if(dataSnapshot.hasChild("online")) {
-
                             String userOnline = dataSnapshot.child("online").getValue().toString();
                             holder.setUserOnline(userOnline);
-
                         }
 
                         holder.setName(userName);
@@ -169,16 +169,18 @@ public class ChatsFragment extends Fragment {
                         holder.mView.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-
-
                                 Intent chatIntent = new Intent(getContext(), ChatActivity.class);
                                 chatIntent.putExtra("user_id", list_user_id);
                                 chatIntent.putExtra("user_name", userName);
-                                startActivity(chatIntent);
+                                mconverDatabase.child(list_user_id).child("seen").setValue(true).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                    @Override
+                                    public void onSuccess(Void aVoid) {
 
+                                    }
+                                });
+                                startActivity(chatIntent);
                             }
                         });
-
 
                     }
 
@@ -187,13 +189,11 @@ public class ChatsFragment extends Fragment {
 
                     }
                 });
-
             }
-
-
         };
 
         mConvList.setAdapter(firebaseConvAdapter);
+
         firebaseConvAdapter.startListening();
 
     }
@@ -202,6 +202,8 @@ public class ChatsFragment extends Fragment {
     public static class ConvViewHolder extends RecyclerView.ViewHolder {
 
         View mView;
+
+        String userImage;
 
         public ConvViewHolder(View itemView) {
             super(itemView);
@@ -213,7 +215,16 @@ public class ChatsFragment extends Fragment {
         public void setMessage(String message, boolean isSeen){
 
             TextView userStatusView = (TextView) mView.findViewById(R.id.userSingleStatus);
-            userStatusView.setText(message);
+
+            String lastMessage = message;
+
+            if (message.length() > 40){
+                lastMessage = message.substring(0, 39) + "...";
+            }
+
+
+
+            userStatusView.setText(lastMessage);
 
             if(!isSeen){
                 userStatusView.setTypeface(userStatusView.getTypeface(), Typeface.BOLD);
@@ -222,6 +233,13 @@ public class ChatsFragment extends Fragment {
             }
 
         }
+
+        public void setImageReceived(){
+            ImageView userImageReceived = (ImageView) mView.findViewById(R.id.imageUserSingleReceived);
+            userImageReceived.setVisibility(View.VISIBLE);
+        }
+
+
 
         public void setName(String name){
 
@@ -232,7 +250,7 @@ public class ChatsFragment extends Fragment {
 
         public void setUserImage(String thumb_image, Context ctx){
 
-            CircleImageView userImageView = (CircleImageView) mView.findViewById(R.id.userSingleImage);
+            CircularImageView userImageView = (CircularImageView) mView.findViewById(R.id.userSingleImage);
             Picasso.with(ctx).load(thumb_image).placeholder(R.drawable.defaultimg).into(userImageView);
 
         }
@@ -250,12 +268,6 @@ public class ChatsFragment extends Fragment {
                 userOnlineView.setVisibility(View.INVISIBLE);
 
             }
-
         }
-
-
     }
-
-
-
 }

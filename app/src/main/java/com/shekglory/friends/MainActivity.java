@@ -1,24 +1,18 @@
 package com.shekglory.friends;
 
 
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.Intent;
-import android.graphics.Color;
-import android.os.Handler;
-import android.support.annotation.Nullable;
+import android.os.Build;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.text.Editable;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.view.InflateException;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -40,17 +34,17 @@ public class MainActivity extends AppCompatActivity {
     private TabLayout mTabLayout;
 
     private DatabaseReference mUserRef;
+    public static final String CHANNEL_ID = "friendRequestIdCleanChat";
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-
         mToolBar = (Toolbar) findViewById(R.id.main_page_toolbar);
         setSupportActionBar(mToolBar);
-        getSupportActionBar().setTitle("Chat");
-
         mAuth = FirebaseAuth.getInstance();
 
         if (mAuth.getCurrentUser() != null){
@@ -59,20 +53,20 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-
         mViewPager = (ViewPager) findViewById(R.id.main_tabPager);
 
         mSectionPagerAdapter = new SectionPagerAdapter(getSupportFragmentManager());
 
         mViewPager.setAdapter(mSectionPagerAdapter);
 
-
         mTabLayout = (TabLayout) findViewById(R.id.main_tabs);
         mTabLayout.setupWithViewPager(mViewPager);
 
-
-//        mAuth = FirebaseAuth.getInstance();
+        createNotificationChannel();
+//
     }
+
+
 
     @Override
     protected void onStart() {
@@ -82,12 +76,10 @@ public class MainActivity extends AppCompatActivity {
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
-
         if( currentUser == null){
             sendToStart();
 
         } else{
-
 
             mUserRef.child("online").setValue("true");
 
@@ -102,29 +94,19 @@ public class MainActivity extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
         if( currentUser != null){
-
                 mUserRef.child("online").setValue(ServerValue.TIMESTAMP);
-
         }
-
-
-
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
-
         getMenuInflater().inflate(R.menu.main_menu, menu);
-
         return true;
     }
 
     private void sendToStart() {
         Intent startIntent = new Intent(MainActivity.this, StartActivity.class);
         startActivity(startIntent);
-
-
         finish();
     }
 
@@ -134,6 +116,7 @@ public class MainActivity extends AppCompatActivity {
         super.onOptionsItemSelected(item);
 
         if( item.getItemId() == R.id.mainLogOutB){
+            mUserRef.child("online").setValue(ServerValue.TIMESTAMP);
             FirebaseAuth.getInstance().signOut();
             sendToStart();
 
@@ -153,6 +136,32 @@ public class MainActivity extends AppCompatActivity {
 
 
         return true;
+    }
+
+
+    private void createNotificationChannel(){
+
+        //create the notificationchannel, but ony on API 26+ because
+        //the notificaionchannel class is new and not in the support library
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+
+            String name = "friendRequest";
+            String description = "connect friends";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+
+            //Register the channel with the system; you can't change the importance
+            //or other notification behaviors after this
+
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+
+        }
+
+
+
     }
 
 

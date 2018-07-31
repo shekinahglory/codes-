@@ -39,12 +39,12 @@
         android:orientation="horizontal"
         >
 
-        <!--<ImageButton-->
-            <!--android:id="@+id/chatAddButton"-->
-            <!--android:layout_width="48dp"-->
-            <!--android:layout_height="match_parent"-->
-            <!--android:background="@color/skyBlue"-->
-            <!--app:srcCompat="@android:drawable/ic_menu_add" />-->
+        <ImageButton
+            android:id="@+id/chatAddButton"
+            android:layout_width="48dp"
+            android:layout_height="match_parent"
+            android:background="@color/skyBlue"
+            app:srcCompat="@android:drawable/ic_menu_add" />
 
         <EditText
             android:id="@+id/chatMessageView"
