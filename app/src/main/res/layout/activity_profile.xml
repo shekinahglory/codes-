@@ -47,10 +47,23 @@
         android:text="@string/total_friend"
          />
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/_0"
+        android:textStyle="bold"
+        android:textSize="20sp"
+        android:paddingTop="10dp"
+        android:layout_below="@+id/profileTotalFriendsId"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/friendsTotalNumberId"
+        />
+
+
     <TableLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/profileTotalFriendsId"
+        android:layout_below="@+id/friendsTotalNumberId"
         android:layout_centerHorizontal="true">
         <TableRow
             android:layout_height="wrap_content"
@@ -61,7 +74,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="36dp"
+                android:layout_marginTop="10dp"
                 android:textColor="@color/colorForText"
                 android:background="#ff4081"
                 android:paddingLeft="10dp"

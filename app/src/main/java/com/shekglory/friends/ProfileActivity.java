@@ -31,7 +31,6 @@ public class ProfileActivity extends AppCompatActivity {
 
 
     private CircularImageView mProfileImageView;
-
     private TextView mProfileName , mProfileStatus , mProfileFriendsCount;
     private Button mProfileSendRequestBtn, mDeclineBtn;
     private DatabaseReference nUserDatabase;
@@ -44,6 +43,7 @@ public class ProfileActivity extends AppCompatActivity {
     private DatabaseReference mRootRef;
     private String friendNUmber;
     private String currentFriendNumber;
+
 
 
 
@@ -64,14 +64,22 @@ public class ProfileActivity extends AppCompatActivity {
         mProfileImageView = (CircularImageView) findViewById(R.id.profileImageViewId);
         mProfileStatus = (TextView) findViewById(R.id.profileDisplayStatus);
         mProfileName = (TextView) findViewById(R.id.profileDisplayName);
-        mProfileFriendsCount = (TextView) findViewById(R.id.profileTotalFriendsId);
+        mProfileFriendsCount = (TextView) findViewById(R.id.friendsTotalNumberId);
         mProfileSendRequestBtn = (Button) findViewById(R.id.profileSendRequestBtn);
+        String curUserId = mCurrentUser.getUid();
+
+
+
         mDeclineBtn = (Button) findViewById(R.id.profileDecineRequestBtn);
         mDeclineBtn.setVisibility(View.INVISIBLE);
+        if(user_id.equals(curUserId)){
 
+            mProfileSendRequestBtn.setVisibility(View.GONE);
+            mDeclineBtn.setVisibility(View.GONE);
+        }
         currentState = "not_friends";
 
-        String curUserId = mCurrentUser.getUid();
+
         mCurUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users").child(curUserId);
         mCurUserDatabase.addValueEventListener(new ValueEventListener() {
             @Override
@@ -95,6 +103,7 @@ public class ProfileActivity extends AppCompatActivity {
                 String image = dataSnapshot.child("image").getValue().toString();
                 mProfileName.setText(display_name);
                 mProfileStatus.setText(status);
+                mProfileFriendsCount.setText(friendNUmber);
                 Picasso.with(ProfileActivity.this).load(image).placeholder(R.drawable.defaultimg).into(mProfileImageView);
 
 //                friends list / request feature
@@ -214,7 +223,6 @@ public class ProfileActivity extends AppCompatActivity {
                 }
 
 //              Request received state
-
                 if(currentState.equals("req_received")){
 
                     final String currenDate = DateFormat.getDateTimeInstance().format(new Date());

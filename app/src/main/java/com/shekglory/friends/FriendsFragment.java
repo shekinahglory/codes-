@@ -25,6 +25,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.mikhaellopez.circularimageview.CircularImageView;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 
@@ -36,7 +37,7 @@ public class FriendsFragment extends Fragment {
 
 
     private RecyclerView mFriendList;
-    private DatabaseReference mFriendDatabase;
+//    private DatabaseReference mFriendDatabase;
     private DatabaseReference mUsersDatabase;
     private FirebaseAuth mAuth;
     private String mCurrentUserId;
@@ -54,24 +55,17 @@ public class FriendsFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         mMainView = inflater.inflate(R.layout.fragment_friends, container, false);
-
         mFriendList = (RecyclerView) mMainView.findViewById(R.id.friendsListId);
         mAuth = FirebaseAuth.getInstance();
-
         mUsersDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
         mUsersDatabase.keepSynced(true);
         mCurrentUserId = mAuth.getCurrentUser().getUid();
-
         query= FirebaseDatabase.getInstance().getReference().child("Friends").child(mCurrentUserId);
         query.keepSynced(true);
-
-
-
         mFriendList.setHasFixedSize(true);
         mFriendList.setLayoutManager(new LinearLayoutManager(getContext()));
 
         // Inflate the layout for this fragment
-
         return mMainView;
     }
 
@@ -102,8 +96,7 @@ public class FriendsFragment extends Fragment {
             @Override
             protected void onBindViewHolder(@NonNull final FriendsViewHolder holder, int position, @NonNull Friends model) {
 
-                holder.setDate(model.getDate());
-
+                holder.setDate("Friend since " +model.getDate());
 
                 final String listUserId = getRef(position).getKey();
                 mUsersDatabase.child(listUserId).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -209,7 +202,7 @@ public class FriendsFragment extends Fragment {
 
             CircularImageView userImageView = (CircularImageView) mView.findViewById(R.id.userSingleImage);
 
-            Picasso.with(context).load(image).placeholder(R.drawable.defaultimg).into(userImageView);
+            Picasso.with(context).load(image).networkPolicy(NetworkPolicy.OFFLINE).placeholder(R.drawable.defaultimg).into(userImageView);
 
         }
 

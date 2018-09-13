@@ -3,12 +3,16 @@ package com.shekglory.friends;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.AppCompatButton;
+import android.support.v7.widget.AppCompatEditText;
 import android.support.v7.widget.Toolbar;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -28,6 +32,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private TextInputLayout mLoginEmail;
     private TextInputLayout mLoginPassword;
+    private TextInputEditText mUserName;
+    private TextInputEditText mUserPassWord;
     private Button mLogin_button;
     private AppCompatButton goToRegisterBtn;
     private ProgressDialog mLoginProgress;
@@ -41,6 +47,8 @@ public class LoginActivity extends AppCompatActivity {
 
         mLoginEmail = (TextInputLayout) findViewById(R.id.logtextInputLayoutEmail);
         mLoginPassword = (TextInputLayout) findViewById(R.id.logtextInputLayoutPassword);
+        mUserName = (TextInputEditText) findViewById(R.id.emailId);
+        mUserPassWord = (TextInputEditText) findViewById(R.id.passwordId);
         mLoginPassword.setCounterEnabled(true);
         mLoginPassword.setCounterMaxLength(20);
         mLoginProgress = new ProgressDialog(this);
@@ -48,6 +56,74 @@ public class LoginActivity extends AppCompatActivity {
         mLogin_button = (Button) findViewById(R.id.logcreateButton);
         goToRegisterBtn = (AppCompatButton) findViewById(R.id.goToRegisterFromLoing_id);
         mUserDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
+
+        mUserName.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if (mUserName.getText().toString().isEmpty() && !hasFocus){
+                    mLoginEmail.setErrorEnabled(true);
+                    mLoginEmail.setError("Please enter your email.");
+                } else {
+                    mLoginEmail.setErrorEnabled(false);
+                }
+            }
+        });
+
+        mUserName.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (mUserName.getText().toString().isEmpty()){
+                    mLoginEmail.setErrorEnabled(true);
+                    mLoginEmail.setError("Please enter your email.");
+                } else {
+                    mLoginEmail.setErrorEnabled(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+
+        mUserPassWord.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(mUserPassWord.getText().toString().isEmpty() && !hasFocus){
+                    mLoginPassword.setErrorEnabled(true);
+                    mLoginPassword.setError("Please enter you password");
+                } else {
+                    mLoginPassword.setErrorEnabled(false);
+                }
+            }
+        });
+
+        mUserPassWord.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if(mUserPassWord.getText().toString().isEmpty()){
+                    mLoginPassword.setErrorEnabled(true);
+                    mLoginPassword.setError("Please enter you password");
+                } else {
+                    mLoginPassword.setErrorEnabled(false);
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
 
         mLogin_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,7 +133,7 @@ public class LoginActivity extends AppCompatActivity {
                 String password = mLoginPassword.getEditText().getText().toString();
 
 
-                if(!TextUtils.isEmpty(email) || !TextUtils.isEmpty(password)){
+                if(!TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)){
 
                     mLoginProgress.setTitle("Logging In");
                     mLoginProgress.setMessage("Please wait while we check your credentials");
@@ -65,6 +141,8 @@ public class LoginActivity extends AppCompatActivity {
                     mLoginProgress.show();
 
                     loginUser( email, password);
+                } else {
+                    Toast.makeText(getApplicationContext(), "Please enter your credentials", Toast.LENGTH_LONG).show();
                 }
             }
         });
@@ -96,7 +174,6 @@ public class LoginActivity extends AppCompatActivity {
                     String current_user_Id = mAuth.getCurrentUser().getUid();
 
                     String tokenId = FirebaseInstanceId.getInstance().getToken();
-
                     mUserDatabase.child(current_user_Id).child("device_token").setValue(tokenId).addOnSuccessListener(new OnSuccessListener<Void>() {
                         @Override
                         public void onSuccess(Void aVoid) {

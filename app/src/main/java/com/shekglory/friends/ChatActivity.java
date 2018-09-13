@@ -14,15 +14,16 @@ import android.support.v7.widget.Toolbar;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ListView;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -38,15 +39,14 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.mikhaellopez.circularimageview.CircularImageView;
-import com.squareup.picasso.Callback;
+import com.opentok.OpenTok;
 import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-//import de.hdodenhof.circleimageview.CircleImageView;
+
 
 public class ChatActivity extends AppCompatActivity {
 
@@ -61,6 +61,7 @@ public class ChatActivity extends AppCompatActivity {
     private String mCurrentUserId;
     private ImageButton mChatAddBtn;
     private ImageButton mChatSendBtn;
+    private ImageView videoCallBtn;
     private CircularImageView mProfileImageView;
     private EditText mChatMessageView;
     private RecyclerView mMessageList;
@@ -69,7 +70,6 @@ public class ChatActivity extends AppCompatActivity {
     private List<Messages> messagesList = new ArrayList<>();
     private LinearLayoutManager mLienearLayout;
     private MessageAdapter messageAdapter;
-//    private MessagesAdapter messagesAdapter;
     private static final int TOTAL_ITMES_TO_LOAD = 10;
     private int mCurrentPage = 1;
     private int itemPos = 0;
@@ -78,8 +78,14 @@ public class ChatActivity extends AppCompatActivity {
     private static final int GALLERY_PICK = 1;
     // Storage Firebase
     private StorageReference mImageStorage;
-
     private DatabaseReference mUserRef;
+    private String userName = "";
+    private String messageFromId;
+    private int messageNumber = 1;
+    private String image;
+
+    private Boolean messageSeen = false;
+
 
 
 
@@ -87,38 +93,24 @@ public class ChatActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
-
         mRootRef = FirebaseDatabase.getInstance().getReference();
         mAuth = FirebaseAuth.getInstance();
         mCurrentUserId = mAuth.getCurrentUser().getUid();
-
         mUserRef = FirebaseDatabase.getInstance().getReference();
-
-        if (mAuth.getCurrentUser() != null){
-            mUserRef.child("Users").child(mAuth.getCurrentUser().getUid())
-                    .child("online").setValue("true")
-                    ;
-        }
-
-
-
-
         mChatToolbar = (Toolbar) findViewById(R.id.chatAppBar);
         setSupportActionBar(mChatToolbar);
         ActionBar actionBar = getSupportActionBar();
         actionBar.setDisplayHomeAsUpEnabled(true);
         actionBar.setDisplayShowCustomEnabled(true);
         mCharUser = getIntent().getStringExtra("user_id");
-        String userName = getIntent().getStringExtra("user_name");
-
-
+         userName = getIntent().getStringExtra("user_name");
+         messageFromId = getIntent().getStringExtra("message_from");
         LayoutInflater inflater = (LayoutInflater) this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View action_bar_view = inflater.inflate(R.layout.chat_custome_bar, null);
         actionBar.setCustomView(action_bar_view);
 
-
         // ------ Custome Action bar items ----
-
+        videoCallBtn = (ImageView) findViewById(R.id.videocallId);
         mTitleView = (TextView) findViewById(R.id.customeBartitle);
         mChatAddBtn = (ImageButton) findViewById(R.id.chatAddButton);
         mChatSendBtn = (ImageButton) findViewById(R.id.chatSendButton);
@@ -134,10 +126,12 @@ public class ChatActivity extends AppCompatActivity {
         mImageStorage = FirebaseStorage.getInstance().getReference();
         mMessageList = (RecyclerView) findViewById(R.id.messagesList);
         mRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipeLayout);
-
         mMessageList.setAdapter(messageAdapter);
-
         loadMessages();
+
+        int apiKey = 000000; // YOUR API KEY
+        String apiSecret = "YOUR API SECRET";
+        OpenTok opentok = new OpenTok(apiKey, apiSecret);
 
         mRootRef.child("Users").child(mCharUser).addValueEventListener(new ValueEventListener() {
             @Override
@@ -162,27 +156,12 @@ public class ChatActivity extends AppCompatActivity {
             }
         });
 
-        mRootRef.child("Chat").child(mCurrentUserId).addValueEventListener(new ValueEventListener() {
+        mRootRef.child("Users").child(mCurrentUserId).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
-                if (!dataSnapshot.hasChild(mCharUser)){
-                    Map chatAddMap = new HashMap();
-                    chatAddMap.put("seen", false);
-                    chatAddMap.put("timestamp", ServerValue.TIMESTAMP);
-                    Map chatUserMap = new HashMap();
-                    chatUserMap.put("Chat/" + mCurrentUserId + "/" + mCharUser, chatAddMap);
-                    chatUserMap.put("Chat/" + mCharUser + "/" + mCurrentUserId, chatAddMap);
-
-                    mRootRef.updateChildren(chatUserMap, new DatabaseReference.CompletionListener() {
-                        @Override
-                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-
-                            if(databaseError != null){ Log.d("CHAT_LOG" , databaseError.getMessage().toString()); }
-                        }
-                    });
-                }
+                image = dataSnapshot.child("image").getValue().toString();
             }
+
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
@@ -218,14 +197,95 @@ public class ChatActivity extends AppCompatActivity {
                 loadMoreMessages();
             }
         });
+
+
+        videoCallBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent videoCall = new Intent(ChatActivity.this, VideoCallActivity.class);
+                startActivity(videoCall);
+            }
+        });
     }
 
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (mCurrentUserId.equals(messageFromId)){
+            Map chatAddMap = new HashMap();
+            chatAddMap.put("seen", true);
+            chatAddMap.put("inactivity", true);
+            Map chatUserMap = new HashMap();
+            chatUserMap.put("Chat/" + mCurrentUserId + "/" + mCharUser, chatAddMap);
+            mRootRef.child("Chat").child(mCurrentUserId).child(mCharUser).setValue(chatAddMap);
 
+        }
+    }
 
+    @Override
+    protected void onStop() {
+        super.onStop();
 
+        if (mCurrentUserId.equals(messageFromId)){
+            Map chatAddMap = new HashMap();
+            chatAddMap.put("seen", true);
+            chatAddMap.put("inactivity", false);
+            chatAddMap.put("timestamp", ServerValue.TIMESTAMP);
+            Map chatUserMap = new HashMap();
+            chatUserMap.put("Chat/" + mCurrentUserId + "/" + mCharUser, chatAddMap);
+            mRootRef.child("Chat").child(mCurrentUserId).child(mCharUser).setValue(chatAddMap);
+        }
+    }
 
+    public void updateChat(){
+        mRootRef.child("Chat").child(mCharUser).child(mCurrentUserId).push();
+        mRootRef.child("Chat").child(mCharUser).child(mCurrentUserId).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String number = "1";
+                Boolean seen = false;
+                Boolean userInactivity;
 
+                if (dataSnapshot.hasChildren()){
+                    if (dataSnapshot.hasChild("number")){
+                        number = dataSnapshot.child("number").getValue().toString();
+                    }
 
+                    seen =  (Boolean) dataSnapshot.child("seen").getValue();
+                    userInactivity = (Boolean) dataSnapshot.child("inactivity").getValue();
+                    if(userInactivity){
+                        messageSeen = true;
+                    }
+                }
+                messageNumber = Integer.parseInt(number);
+                if(!seen){
+                    messageNumber++;
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        Map chatAddMap = new HashMap();
+        Map chatAddMapSec = new HashMap();
+        chatAddMap.put("seen", messageSeen);
+        chatAddMap.put("inactivity", true);
+        chatAddMap.put("timestamp", ServerValue.TIMESTAMP);
+        chatAddMap.put("number", messageNumber +"" );
+        chatAddMapSec.put("seen", messageSeen);
+        chatAddMapSec.put("inactivity", messageSeen);
+        chatAddMapSec.put("timestamp", ServerValue.TIMESTAMP);
+        chatAddMapSec.put("number", messageNumber +"" );
+        Map chatUserMap = new HashMap();
+        chatUserMap.put("Chat/" + mCurrentUserId + "/" + mCharUser, chatAddMap);
+        chatUserMap.put("Chat/" + mCharUser + "/" + mCurrentUserId, chatAddMap);
+        mRootRef.child("Chat").child(mCurrentUserId).child(mCharUser).setValue(chatAddMap);
+        mRootRef.child("Chat").child(mCharUser).child(mCurrentUserId).setValue(chatAddMapSec);
+
+    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -252,6 +312,7 @@ public class ChatActivity extends AppCompatActivity {
                         messageMap.put("seen", false);
                         messageMap.put("type", "image");
                         messageMap.put("time", ServerValue.TIMESTAMP);
+                        messageMap.put("image", image);
                         messageMap.put("from", mCurrentUserId);
                         Map messageUserMap = new HashMap();
                         messageUserMap.put(current_user_ref + "/" + push_id, messageMap);
@@ -266,6 +327,10 @@ public class ChatActivity extends AppCompatActivity {
                     }
                 }
             });
+
+            updateChat();
+
+
         }
     }
 
@@ -282,7 +347,6 @@ public class ChatActivity extends AppCompatActivity {
                 if(!mPrevKey.equals(messageKey)){ messagesList.add(itemPos++, message); }
                 else { mPrevKey = mLastKey; }
                 if(itemPos == 1) { mLastKey = messageKey; }
-                Log.d("TOTALKEYS", "Last Key : " + mLastKey + " | Prev Key : " + mPrevKey + " | Message Key : " + messageKey);
                 messageAdapter.notifyDataSetChanged();
                 mRefreshLayout.setRefreshing(false);
                 mLienearLayout.scrollToPositionWithOffset(10, 0);
@@ -352,7 +416,6 @@ public class ChatActivity extends AppCompatActivity {
 
             }
         });
-
     }
 
     private void sendMessage() {
@@ -363,46 +426,34 @@ public class ChatActivity extends AppCompatActivity {
 
             String current_user_ref = "messages/" + mCurrentUserId + "/" + mCharUser;
             String chat_user_ref = "messages/" + mCharUser +"/" + mCurrentUserId;
-
             DatabaseReference usere_message_push = mRootRef.child("messages").child(mCurrentUserId).child(mCharUser).push();
-
             String push_id = usere_message_push.getKey();
+            String message_to_ref = "messagesendto/" + mCharUser + "/" + push_id;
 
             Map messageMap = new HashMap();
             messageMap.put("messages" , message);
             messageMap.put("seen" , false);
             messageMap.put("type", "text");
+            messageMap.put("name", userName);
             messageMap.put("time", ServerValue.TIMESTAMP);
             messageMap.put("from", mCurrentUserId);
 
             Map messageUserMap = new HashMap();
 
             messageUserMap.put(current_user_ref + "/" + push_id, messageMap);
-
+            messageUserMap.put(message_to_ref + "/" ,messageMap);
             messageUserMap.put(chat_user_ref+ "/" +push_id, messageMap);
 
             mRootRef.updateChildren(messageUserMap, new DatabaseReference.CompletionListener() {
                 @Override
                 public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-
                     if(databaseError != null){
                         Log.d("CHAT_LOG", databaseError.getMessage().toString());
                     }
-
                 }
             });
 
-            Map chatAddMap = new HashMap();
-            chatAddMap.put("seen", false);
-            chatAddMap.put("timestamp", ServerValue.TIMESTAMP);
-            Map chatUserMap = new HashMap();
-            chatUserMap.put("Chat/" + mCurrentUserId + "/" + mCharUser, chatAddMap);
-            chatUserMap.put("Chat/" + mCharUser + "/" + mCurrentUserId, chatAddMap);
-
-
-            mRootRef.child("Chat").child(mCurrentUserId).child(mCharUser).setValue(chatAddMap);
-            mRootRef.child("Chat").child(mCharUser).child(mCurrentUserId).setValue(chatAddMap);
-
+            updateChat();
 
 
         }

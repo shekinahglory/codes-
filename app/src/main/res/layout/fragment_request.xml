@@ -3,7 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/fragment_request_id"
     tools:context=".RequestFragment">
+
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -17,7 +19,7 @@
             android:id="@+id/searchFriendId"
             android:layout_width="280dp"
             android:layout_height="56dp"
-            android:layout_marginLeft="15dp"
+            android:layout_marginStart="15dp"
             android:background="@drawable/search_layout"
             android:ems="10"
             android:inputType="textPersonName"
@@ -29,7 +31,7 @@
             android:id="@+id/imageView"
             android:layout_width="56dp"
             android:layout_height="56dp"
-            android:layout_marginLeft="20dp"
+            android:layout_marginStart="10dp"
             android:src="@drawable/find"
             />
     </LinearLayout>

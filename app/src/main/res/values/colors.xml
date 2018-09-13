@@ -6,5 +6,6 @@
     <color name="colorForText">#424242</color>
     <color name="colorForBackgroundBlack">#424242</color>
     <color name="skyBlue">#ffffff</color>
+    <color name="publisher_border_color">#FFFFFF</color>
 
 </resources>

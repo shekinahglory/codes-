@@ -2,23 +2,22 @@ package com.shekglory.friends;
 
 public class Messages {
 
-
-
-    private String messages, type;
-
+    private String messages, type , image;
     private long time;
-
     private boolean seen;
-
-
-
-
-
     private String from;
 
     public Messages(String from) {
         this.from = from;
     }
+    public Messages(String messages, boolean seen, long time, String type, String image){
+        this.messages = messages;
+        this.seen = seen;
+        this.time = time;
+        this.type = type;
+        this.image = image;
+    }
+    public Messages(){ }
 
     public String getFrom() {
         return from;
@@ -28,22 +27,16 @@ public class Messages {
         this.from = from;
     }
 
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
     public long getTime() {
         return time;
-    }
-
-    public Messages(String messages, boolean seen, long time, String type){
-
-        this.messages = messages;
-        this.seen = seen;
-        this.time = time;
-        this.type = type;
-
-
-    }
-
-    public Messages(){
-
     }
 
     public void setTime(long time) {

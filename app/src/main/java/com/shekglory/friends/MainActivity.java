@@ -3,6 +3,7 @@ package com.shekglory.friends;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.support.design.widget.TabLayout;
@@ -10,10 +11,13 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.github.arturogutierrez.Badges;
+import com.github.arturogutierrez.BadgesNotSupportedException;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -38,6 +42,8 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,34 +54,38 @@ public class MainActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         if (mAuth.getCurrentUser() != null){
-
             mUserRef = FirebaseDatabase.getInstance().getReference().child("Users").child(mAuth.getCurrentUser().getUid());
-
         }
+
+        try {
+            Badges.setBadge(getApplicationContext(), 5);
+        } catch (BadgesNotSupportedException badgesNotSupportedException) {
+            Log.d("notification count", badgesNotSupportedException.getMessage());
+        }
+
 
         mViewPager = (ViewPager) findViewById(R.id.main_tabPager);
 
         mSectionPagerAdapter = new SectionPagerAdapter(getSupportFragmentManager());
 
+
+
         mViewPager.setAdapter(mSectionPagerAdapter);
+//        setContentView(R.id.fragment_request_id);
 
         mTabLayout = (TabLayout) findViewById(R.id.main_tabs);
         mTabLayout.setupWithViewPager(mViewPager);
-
+        checkUser();
         createNotificationChannel();
+
+
 //
     }
 
-
-
-    @Override
-    protected void onStart() {
-        super.onStart();
+    public void checkUser(){
 
         // Check if user is signed in (non-null) and update UI accordingly.
-
         FirebaseUser currentUser = mAuth.getCurrentUser();
-
         if( currentUser == null){
             sendToStart();
 
@@ -87,16 +97,34 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onStart() {
+        super.onStart();
+
 
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
+        if( currentUser == null){
+            sendToStart();
+
+        }
+
+        NotificationManager notificationManager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancelAll();
+
+    }
+
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
         if( currentUser != null){
-                mUserRef.child("online").setValue(ServerValue.TIMESTAMP);
+            mUserRef.child("online").setValue(ServerValue.TIMESTAMP);
         }
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -159,8 +187,6 @@ public class MainActivity extends AppCompatActivity {
             notificationManager.createNotificationChannel(channel);
 
         }
-
-
 
     }
 

@@ -28,11 +28,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.mikhaellopez.circularimageview.CircularImageView;
+import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
-/**
- * A simple {@link Fragment} subclass.
- */
+
 public class
 ChatsFragment extends Fragment {
 
@@ -44,6 +43,7 @@ ChatsFragment extends Fragment {
     private DatabaseReference mUsersDatabase;
     private FirebaseAuth mAuth;
     private String mCurrent_user_id;
+    private String mMessageFrom_id = "";
     private TextView welcomeChatText;
     private View mMainView;
 
@@ -62,7 +62,7 @@ ChatsFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
         mCurrent_user_id = mAuth.getCurrentUser().getUid();
         mConvDatabase = FirebaseDatabase.getInstance().getReference().child("Chat").child(mCurrent_user_id);
-        mconverDatabase = FirebaseDatabase.getInstance().getReference().child("Chat").child(mCurrent_user_id);
+        mconverDatabase = FirebaseDatabase.getInstance().getReference().child("Chat");
         mConvDatabase.keepSynced(true);
         mUsersDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
         mMessageDatabase = FirebaseDatabase.getInstance().getReference().child("messages").child(mCurrent_user_id);
@@ -98,18 +98,13 @@ ChatsFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-
-
-
-
-        Query conversationQuery = mConvDatabase.orderByChild("timestamp").limitToLast(20);
+        Query conversationQuery = mConvDatabase.orderByChild("timestamp");
         conversationQuery.keepSynced(true);
 
         FirebaseRecyclerOptions<Conv> options =
                 new FirebaseRecyclerOptions.Builder<Conv>()
                         .setQuery(conversationQuery, Conv.class)
                         .build();
-
 
         FirebaseRecyclerAdapter<Conv, ConvViewHolder> firebaseConvAdapter = new FirebaseRecyclerAdapter<Conv, ConvViewHolder>(
                 options
@@ -129,16 +124,28 @@ ChatsFragment extends Fragment {
                 final String list_user_id = getRef(position).getKey();
 
                 final Query lastMessageQuery = mMessageDatabase.child(list_user_id).limitToLast(1);
-
+                lastMessageQuery.keepSynced(true);
                 lastMessageQuery.addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
 
-                        if (dataSnapshot.child("type").getValue().toString().equals("text")){
+                        String messageFrom ;
+                        if (dataSnapshot.child("type").getValue().toString().equals("text")) {
                             String data = dataSnapshot.child("messages").getValue().toString();
-                            holder.setMessage(data, model.isSeen());
+                            mMessageFrom_id = dataSnapshot.child("from").getValue().toString();
+                            messageFrom = "them";
+                            if (mCurrent_user_id.equals(mMessageFrom_id)) {
+                                messageFrom = "me";
+                            }
+
+                            holder.setMessage(data, model.isSeen(), messageFrom, model.getNumber());
                         } else {
-                            holder.setMessage("Image", model.isSeen());
+                            mMessageFrom_id = dataSnapshot.child("from").getValue().toString();
+                            messageFrom = "them";
+                            if (mCurrent_user_id.equals(mMessageFrom_id)) {
+                                messageFrom = "me";
+                            }
+                            holder.setMessage("Image", model.isSeen(), messageFrom, model.getNumber());
                             holder.setImageReceived();
                         }
                     }
@@ -172,18 +179,11 @@ ChatsFragment extends Fragment {
                                 Intent chatIntent = new Intent(getContext(), ChatActivity.class);
                                 chatIntent.putExtra("user_id", list_user_id);
                                 chatIntent.putExtra("user_name", userName);
-                                mconverDatabase.child(list_user_id).child("seen").setValue(true).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                    @Override
-                                    public void onSuccess(Void aVoid) {
-
-                                    }
-                                });
+                                chatIntent.putExtra("message_from", mMessageFrom_id);
                                 startActivity(chatIntent);
                             }
                         });
-
                     }
-
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
 
@@ -191,11 +191,8 @@ ChatsFragment extends Fragment {
                 });
             }
         };
-
         mConvList.setAdapter(firebaseConvAdapter);
-
         firebaseConvAdapter.startListening();
-
     }
 
 
@@ -212,24 +209,21 @@ ChatsFragment extends Fragment {
 
         }
 
-        public void setMessage(String message, boolean isSeen){
+        public void setMessage(String message, boolean isSeen, String messageFrm , String number){
 
             TextView userStatusView = (TextView) mView.findViewById(R.id.userSingleStatus);
+
+            TextView numberOfMessageReceived = (TextView) mView.findViewById(R.id.newTextNumberId);
 
             String lastMessage = message;
 
             if (message.length() > 40){
                 lastMessage = message.substring(0, 39) + "...";
             }
-
-
-
             userStatusView.setText(lastMessage);
-
-            if(!isSeen){
-                userStatusView.setTypeface(userStatusView.getTypeface(), Typeface.BOLD);
-            } else {
-                userStatusView.setTypeface(userStatusView.getTypeface(), Typeface.NORMAL);
+            if(!isSeen  && !messageFrm.equals("me")){
+                numberOfMessageReceived.setText(number);
+                numberOfMessageReceived.setVisibility(View.VISIBLE);
             }
 
         }
@@ -251,7 +245,7 @@ ChatsFragment extends Fragment {
         public void setUserImage(String thumb_image, Context ctx){
 
             CircularImageView userImageView = (CircularImageView) mView.findViewById(R.id.userSingleImage);
-            Picasso.with(ctx).load(thumb_image).placeholder(R.drawable.defaultimg).into(userImageView);
+            Picasso.with(ctx).load(thumb_image).networkPolicy(NetworkPolicy.OFFLINE).placeholder(R.drawable.defaultimg).into(userImageView);
 
         }
 

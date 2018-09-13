@@ -6,7 +6,19 @@
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+    <uses-permission android:name="com.sec.android.provider.badge.permission.READ" />
+    <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE" />
+    <uses-permission android:name="com.sonyericsson.home.permission.BROADCAST_BADGE" />
+    <uses-permission android:name="com.htc.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="com.htc.launcher.permission.UPDATE_SHORTCUT" />
+    <uses-permission android:name="android.permission.MANAGE_OWN_CALLS"/>
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
 
     <application
         android:allowBackup="true"
@@ -14,7 +26,9 @@
         android:label="@string/cleanChat"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:name=".FriendsChat"
+        >
         <service android:name=".FirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -24,6 +38,7 @@
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -45,19 +60,22 @@
         <activity
             android:name=".ChatActivity"
             android:parentActivityName=".MainActivity">
+            <intent-filter>
+                <action android:name="com.shekglory.friends_TARGET_MESSAGE">
+                </action>
+                <category android:name="android.intent.category.DEFAULT">
+                </category>
+            </intent-filter>
 
         </activity>
-        <activity android:name=".ProfileActivity" >
+        <activity android:name=".ProfileActivity">
             <intent-filter>
-                <action android:name="com.shekglory.friends_TARGET_NOTIFICATION">
-                </action>
-                <category android:name="android.intent.category.DEFAULT"></category>
+                <action android:name="com.shekglory.friends_TARGET_NOTIFICATION"></action>
+                <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".RegisterProfImageActivity">
-
-        </activity>
+        <activity android:name=".RegisterProfImageActivity"></activity>
+        <activity android:name=".VideoCallActivity"></activity>
     </application>
 
 </manifest>

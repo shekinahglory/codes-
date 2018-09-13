@@ -30,9 +30,7 @@ public class FriendsChat extends Application {
         Picasso built = builder.build();
         built.setIndicatorsEnabled(true);
         built.setLoggingEnabled(true);
-
         Picasso.setSingletonInstance(built);
-
         mAuth = FirebaseAuth.getInstance();
 
         if(mAuth.getCurrentUser() != null){
@@ -43,16 +41,9 @@ public class FriendsChat extends Application {
             mUserDatabase.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
-
                     if(dataSnapshot != null){
-
                         mUserDatabase.child("online").onDisconnect().setValue(ServerValue.TIMESTAMP);
-
-
                     }
-
-
-
                 }
 
                 @Override
