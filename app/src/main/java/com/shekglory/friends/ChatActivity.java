@@ -2,7 +2,9 @@ package com.shekglory.friends;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBar;
@@ -19,7 +21,12 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+
 import android.widget.RelativeLayout;
+
+import android.widget.ListView;
+import android.widget.MediaController;
+
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +48,9 @@ import com.google.firebase.storage.UploadTask;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.opentok.OpenTok;
 import com.squareup.picasso.Picasso;
+
+import java.io.IOException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -97,6 +107,15 @@ public class ChatActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         mCurrentUserId = mAuth.getCurrentUser().getUid();
         mUserRef = FirebaseDatabase.getInstance().getReference();
+
+
+        if (mAuth.getCurrentUser() != null){
+            mUserRef.child("Users").child(mAuth.getCurrentUser().getUid())
+                    .child("online").setValue("true")
+                    ;
+        }
+
+
         mChatToolbar = (Toolbar) findViewById(R.id.chatAppBar);
         setSupportActionBar(mChatToolbar);
         ActionBar actionBar = getSupportActionBar();
@@ -293,6 +312,16 @@ public class ChatActivity extends AppCompatActivity {
 
         if(requestCode == GALLERY_PICK && resultCode == RESULT_OK){
             Uri imageUri = data.getData();
+
+//            try {
+//                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), imageUri);
+//                ImageView imageToSend = (ImageView) findViewById(R.id.imageToSend);
+//                imageToSend.setImageBitmap(bitmap);
+//
+//            } catch (IOException ex){
+//
+//                ex.printStackTrace();
+//            }
             final String current_user_ref = "messages/" + mCurrentUserId + "/" + mCharUser;
             final String chat_user_ref = "messages/" + mCharUser + "/" + mCurrentUserId;
 
@@ -423,11 +452,11 @@ public class ChatActivity extends AppCompatActivity {
         String message = mChatMessageView.getText().toString();
 
         if (!TextUtils.isEmpty(message)){
-
             String current_user_ref = "messages/" + mCurrentUserId + "/" + mCharUser;
             String chat_user_ref = "messages/" + mCharUser +"/" + mCurrentUserId;
             DatabaseReference usere_message_push = mRootRef.child("messages").child(mCurrentUserId).child(mCharUser).push();
             String push_id = usere_message_push.getKey();
+
             String message_to_ref = "messagesendto/" + mCharUser + "/" + push_id;
 
             Map messageMap = new HashMap();
@@ -439,9 +468,10 @@ public class ChatActivity extends AppCompatActivity {
             messageMap.put("from", mCurrentUserId);
 
             Map messageUserMap = new HashMap();
-
             messageUserMap.put(current_user_ref + "/" + push_id, messageMap);
+
             messageUserMap.put(message_to_ref + "/" ,messageMap);
+
             messageUserMap.put(chat_user_ref+ "/" +push_id, messageMap);
 
             mRootRef.updateChildren(messageUserMap, new DatabaseReference.CompletionListener() {
